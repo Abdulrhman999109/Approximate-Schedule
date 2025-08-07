@@ -1,0 +1,15 @@
+
+Approximate_front/node_modules/
+Approximate_front/.env
+
+ApproximateAPI/bin/
+ApproximateAPI/obj/
+ApproximateAPI/.vs/
+ApproximateAPI/appsettings.json
+ApproximateAPI/appsettings.Development.json
+
+
+.env
+*.log
+*.user
+*.suo
