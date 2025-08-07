@@ -18,6 +18,7 @@ export default function TasksTab() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [editTaskId, setEditTaskId] = useState<number | null>(null);
+  const [showForm, setShowForm] = useState(false); 
 
   const token = localStorage.getItem("token");
   const today = new Date().toISOString().split("T")[0];
@@ -71,6 +72,7 @@ export default function TasksTab() {
       setPriority("Low");
       setTaskDate("");
       setEditTaskId(null);
+      setShowForm(false);
       setSuccess(editTaskId ? "Task updated." : "Task added.");
       fetchTasks();
     } catch {
@@ -84,6 +86,7 @@ export default function TasksTab() {
     setPriority(task.priority);
     setTaskDate(task.taskDate);
     setEditTaskId(task.taskId || null);
+    setShowForm(true); 
   };
 
   const handleDeleteTask = async (id: number) => {
@@ -113,70 +116,102 @@ export default function TasksTab() {
   };
 
   return (
-    <div className="pt-28 px-6 pb-6 space-y-6 bg-gray-50 min-h-screen max-w-3xl mx-auto">
+    <div className="pt-32 px-6 pb-6 space-y-6 bg-gray-50 min-h-screen max-w-3xl mx-auto">
       <h2 className="text-2xl font-bold text-green-700">Your Tasks</h2>
 
       {error && <div className="text-red-600">{error}</div>}
       {success && <div className="text-green-600">{success}</div>}
 
-      <div className="bg-white p-4 rounded shadow space-y-4">
-        <h3 className="font-semibold text-lg text-green-700">
-          {editTaskId ? "Edit Task" : "Add Task"}
-        </h3>
-
-        <div className="space-y-1">
-          <label className="text-gray-700 font-medium">Title</label>
-          <input
-            className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-300"
-            type="text"
-            placeholder="Enter task title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-        </div>
-
-        <div className="space-y-1">
-          <label className="text-gray-700 font-medium">Description</label>
-          <input
-            className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-300"
-            type="text"
-            placeholder="Enter task description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </div>
-
-        <div className="space-y-1">
-          <label className="text-gray-700 font-medium">Priority</label>
-          <select
-            className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-300"
-            value={priority}
-            onChange={(e) => setPriority(e.target.value as Task["priority"])}
-          >
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
-          </select>
-        </div>
-
-        <div className="space-y-1">
-          <label className="text-gray-700 font-medium">Task Date</label>
-          <input
-            className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-300 text-gray-700"
-            type="date"
-            min={today}
-            value={taskDate}
-            onChange={(e) => setTaskDate(e.target.value)}
-          />
-        </div>
-
+      {!showForm && (
         <button
-          onClick={handleAddOrUpdateTask}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition w-full"
+          onClick={() => {
+            setShowForm(true);
+            setEditTaskId(null);
+            setTitle("");
+            setDescription("");
+            setPriority("Low");
+            setTaskDate("");
+          }}
+          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
         >
-          {editTaskId ? "Update Task" : "Add Task"}
+          + Add Task
         </button>
-      </div>
+      )}
+
+      {showForm && (
+        <div className="bg-white p-4 rounded shadow space-y-4">
+          <h3 className="font-semibold text-lg text-green-700">
+            {editTaskId ? "Edit Task" : "Add Task"}
+          </h3>
+
+          <div className="space-y-1">
+            <label className="text-gray-700 font-medium">Title</label>
+            <input
+              className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-300"
+              type="text"
+              placeholder="Enter task title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-gray-700 font-medium">Description</label>
+            <input
+              className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-300"
+              type="text"
+              placeholder="Enter task description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-gray-700 font-medium">Priority</label>
+            <select
+              className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-300"
+              value={priority}
+              onChange={(e) => setPriority(e.target.value as Task["priority"])}
+            >
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+            </select>
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-gray-700 font-medium">Task Date</label>
+            <input
+              className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-300 text-gray-700"
+              type="date"
+              min={today}
+              value={taskDate}
+              onChange={(e) => setTaskDate(e.target.value)}
+            />
+          </div>
+
+          <button
+            onClick={handleAddOrUpdateTask}
+            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition w-full"
+          >
+            {editTaskId ? "Update Task" : "Add Task"}
+          </button>
+
+          <button
+            onClick={() => {
+              setShowForm(false);
+              setEditTaskId(null);
+              setTitle("");
+              setDescription("");
+              setPriority("Low");
+              setTaskDate("");
+            }}
+            className="text-gray-500 hover:underline w-full"
+          >
+            Cancel
+          </button>
+        </div>
+      )}
 
       <div className="bg-white p-4 rounded shadow space-y-2">
         <h3 className="font-semibold text-lg text-green-700">Existing Tasks</h3>
